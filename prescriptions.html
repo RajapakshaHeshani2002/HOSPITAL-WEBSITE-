@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prescription Manager</title>
+
+  <!-- Bootstrap 5 (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent:#2563eb;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --glass: rgba(255,255,255,0.6);
+    }
+    body{
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #f3f6fd 0%, #ffffff 100%);
+      color:#111827;
+      padding:24px;
+    }
+    .app-shell{
+      max-width:1200px;
+      margin:0 auto;
+    }
+    header .brand{
+      font-weight:700;
+      color:var(--accent);
+      letter-spacing:0.2px;
+    }
+    .prescription-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.9));
+      border-radius:12px;
+      box-shadow: 0 6px 20px rgba(32,41,61,0.06);
+      padding:18px;
+      border:1px solid rgba(37,99,235,0.06);
+    }
+    .medicine-row .form-control{min-width:120px;}
+    .preview{
+      min-height:300px;
+      border:1px dashed rgba(0,0,0,0.06);
+      padding:18px;
+      background: #fff;
+    }
+    .pres-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .clinic{
+      font-weight:700;
+      color:var(--accent);
+      font-size:1.05rem;
+    }
+    .pres-meta small{color:var(--muted);}
+    .signature-pad{border:1px solid #ddd;border-radius:6px;height:90px; touch-action: none;}
+    .pill{
+      display:inline-block;
+      background:rgba(37,99,235,0.08);
+      color:var(--accent);
+      padding:4px 8px;
+      border-radius:999px;
+      font-weight:600;font-size:0.8rem;
+    }
+    .btn-icon{display:inline-flex;align-items:center;gap:6px;}
+    @media (max-width:991px){
+      .pres-head{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <div class="brand">MediScript • Prescription Manager</div>
+        <div class="text-muted small">Create, save, print and manage prescriptions — offline</div>
+      </div>
+      <div class="text-end">
+        <button id="newBtn" class="btn btn-outline-primary btn-sm">New Prescription</button>
+      </div>
+    </header>
+
+    <main class="row gx-4 gy-4">
+      <!-- LEFT: FORM -->
+      <section class="col-lg-6">
+        <div class="prescription-card">
+          <h5 class="mb-3">Prescription Details</h5>
+
+          <form id="prescriptionForm" autocomplete="off">
+            <div class="row g-2">
+              <div class="col-12 col-md-6">
+                <label class="form-label small">Patient Name</label>
+                <input id="patientName" class="form-control" required placeholder="e.g. Nimal Perera">
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label small">Age</label>
+                <input id="patientAge" class="form-control" type="number" min="0" placeholder="35">
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label small">Gender</label>
+                <select id="patientGender" class="form-select">
+                  <option value="">Select</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-2 mt-2">
+              <div class="col-8">
+                <label class="form-label small">Doctor / Clinic</label>
+                <input id="doctorName" class="form-control" placeholder="Dr. S. Fernando — City Clinic">
+              </div>
+              <div class="col-4">
+                <label class="form-label small">Date</label>
+                <input id="presDate" class="form-control" type="date" required>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="small text-muted">Medicines</div>
+              <div>
+                <button id="addMedicineBtn" type="button" class="btn btn-sm btn-outline-success">+ Add medicine</button>
+              </div>
+            </div>
+
+            <div id="medicinesList" class="mb-2">
+              <!-- Medicine rows inserted here -->
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small">Notes / Instructions</label>
+              <textarea id="notes" class="form-control" rows="3" placeholder="E.g. Take after meals"></textarea>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small">Signature (draw)</label>
+              <div>
+                <canvas id="sigPad" class="signature-pad w-100"></canvas>
+                <div class="mt-2 d-flex gap-2">
+                  <button id="clearSig" type="button" class="btn btn-sm btn-outline-secondary">Clear</button>
+                  <button id="saveSig" type="button" class="btn btn-sm btn-primary">Save signature</button>
+                </div>
+                <input type="hidden" id="sigData">
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+              <button id="saveBtn" type="submit" class="btn btn-primary btn-icon">
+                Save Prescription
+              </button>
+              <button id="previewBtn" type="button" class="btn btn-outline-secondary">Preview</button>
+              <button id="exportBtn" type="button" class="btn btn-outline-info">Export JSON</button>
+              <button id="printBtn" type="button" class="btn btn-outline-success">Print Preview</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Saved prescriptions list -->
+        <div class="mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6>Saved Prescriptions</h6>
+            <div class="d-flex gap-2">
+              <input id="searchInput" class="form-control form-control-sm" placeholder="Search by patient / doctor" style="width:240px">
+              <button id="clearAll" class="btn btn-sm btn-outline-danger">Clear All</button>
+            </div>
+          </div>
+
+          <div id="savedList" class="list-group"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT: PREVIEW -->
+      <aside class="col-lg-6">
+        <div class="prescription-card">
+          <div class="pres-head mb-3">
+            <div>
+              <div class="clinic">City Clinic • <span class="pill">Rx</span></div>
+              <div class="pres-meta small">Official prescription preview</div>
+            </div>
+            <div class="text-end">
+              <div class="small text-muted">Template: Modern</div>
+            </div>
+          </div>
+
+          <div id="previewArea" class="preview">
+            <!-- Rendered preview here -->
+            <div id="previewContent" style="opacity:.85">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <strong id="pvDoctor">Dr. —</strong><br>
+                  <small id="pvClinic" class="text-muted">Clinic address</small>
+                </div>
+                <div class="text-end">
+                  <div id="pvDate"></div>
+                  <div id="pvId" class="small text-muted">ID: —</div>
+                </div>
+              </div>
+
+              <hr>
+
+              <div style="display:flex;justify-content:space-between">
+                <div>
+                  <div><strong id="pvPatient">Patient:</strong></div>
+                  <div class="small text-muted" id="pvMeta">Age: — • Gender: —</div>
+                </div>
+                <div class="text-end small">
+                  <div>Follow-up: ________</div>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <strong>Medicines</strong>
+                <ul id="pvMeds" class="mb-0"></ul>
+              </div>
+
+              <div class="mt-3">
+                <strong>Notes</strong>
+                <div id="pvNotes" class="small text-muted">—</div>
+              </div>
+
+              <div class="mt-4 d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="small text-muted">Signature</div>
+                  <img id="pvSig" alt="signature" style="max-height:80px;">
+                </div>
+                <div class="text-end">
+                  <div class="small text-muted">Doctor's stamp</div>
+                  <div style="height:48px;width:120px;border-radius:8px;background:linear-gradient(90deg,#f8fafc,#eef2ff);display:flex;align-items:center;justify-content:center;color:#334155;font-weight:700">City Clinic</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </aside>
+    </main>
+
+    <footer class="mt-4 text-center text-muted small">
+      Built with ❤️ — offline friendly. Save / print locally.
+    </footer>
+  </div>
+
+  <!-- Bootstrap & icons -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // -------------------------
+    // Utilities
+    // -------------------------
+    const $ = (id) => document.getElementById(id);
+    const q = (sel, ctx=document) => ctx.querySelector(sel);
+
+    // LocalStorage key
+    const STORAGE_KEY = 'medi_prescriptions_v1';
+
+    // DOM refs
+    const medicinesList = $('medicinesList');
+    const addMedicineBtn = $('addMedicineBtn');
+    const presForm = $('prescriptionForm');
+    const savedList = $('savedList');
+    const previewBtn = $('previewBtn');
+    const saveBtn = $('saveBtn');
+    const previewArea = $('previewContent');
+    const pvDoctor = $('pvDoctor'), pvClinic = $('pvClinic'), pvDate = $('pvDate'), pvPatient = $('pvPatient'), pvMeta = $('pvMeta'), pvMeds = $('pvMeds'), pvNotes = $('pvNotes'), pvSig = $('pvSig');
+    const presDate = $('presDate');
+    const searchInput = $('searchInput');
+    const clearAllBtn = $('clearAll');
+    const exportBtn = $('exportBtn');
+    const printBtn = $('printBtn');
+    const newBtn = $('newBtn');
+
+    // Signature pad (simple)
+    const sigCanvas = $('sigPad');
+    const clearSig = $('clearSig');
+    const saveSig = $('saveSig');
+    const sigDataInput = $('sigData');
+    let sigCtx, drawing=false;
+    function initSigPad(){
+      sigCanvas.width = sigCanvas.clientWidth;
+      sigCanvas.height = sigCanvas.clientHeight;
+      sigCtx = sigCanvas.getContext('2d');
+      sigCtx.lineWidth = 2.2;
+      sigCtx.lineCap = 'round';
+      sigCtx.strokeStyle = '#111';
+      sigCanvas.addEventListener('pointerdown', (e) => { drawing=true; sigCtx.beginPath(); sigCtx.moveTo(e.offsetX, e.offsetY); });
+      sigCanvas.addEventListener('pointermove', (e) => { if(!drawing) return; sigCtx.lineTo(e.offsetX, e.offsetY); sigCtx.stroke(); });
+      document.addEventListener('pointerup', () => { drawing=false; });
+      clearSig.addEventListener('click', () => { sigCtx.clearRect(0,0,sigCanvas.width, sigCanvas.height); sigDataInput.value=''; pvSig.src=''; });
+      saveSig.addEventListener('click', () => {
+        const data = sigCanvas.toDataURL('image/png');
+        sigDataInput.value = data;
+        pvSig.src = data;
+        showToast('Signature saved');
+      });
+      window.addEventListener('resize', () => {
+        // preserve drawing on resize by saving and restoring (simple)
+        const data = sigCanvas.toDataURL();
+        sigCanvas.width = sigCanvas.clientWidth;
+        sigCanvas.height = sigCanvas.clientHeight;
+        const img = new Image();
+        img.onload = ()=> sigCtx.drawImage(img,0,0, sigCanvas.width, sigCanvas.height);
+        img.src = data;
+      });
+    }
+
+    // Add one medicine row
+    function addMedicineRow(med = {}) {
+      const id = 'm' + Date.now() + Math.random().toString(36).slice(2,6);
+      const div = document.createElement('div');
+      div.className = 'medicine-row d-flex gap-2 align-items-center mb-2';
+      div.dataset.id = id;
+      div.innerHTML = `
+        <input class="form-control form-control-sm med-name" placeholder="Medicine & strength" value="${escapeHtml(med.name||'')}" />
+        <input class="form-control form-control-sm med-dose" placeholder="Dose (e.g. 1 tab)" value="${escapeHtml(med.dose||'')}" />
+        <input class="form-control form-control-sm med-frequency" placeholder="Frequency (e.g. BD)" value="${escapeHtml(med.freq||'')}" />
+        <input class="form-control form-control-sm med-days" placeholder="Days" style="width:80px" value="${escapeHtml(med.days||'')}" />
+        <button class="btn btn-sm btn-danger remove-med" title="Remove">✕</button>
+      `;
+      medicinesList.appendChild(div);
+      div.querySelector('.remove-med').addEventListener('click', ()=> div.remove());
+      return div;
+    }
+
+    // Escape HTML for safety
+    function escapeHtml(s=''){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+
+    // Load saved prescriptions from storage
+    function loadSaved(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      try {
+        return raw ? JSON.parse(raw) : [];
+      } catch(e){ return []; }
+    }
+    function saveAll(list){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    // Render saved list
+    function renderSaved(filter=''){
+      savedList.innerHTML = '';
+      const list = loadSaved().slice().reverse(); // newest first
+      if (!list.length) {
+        savedList.innerHTML = `<div class="text-muted small">No saved prescriptions yet.</div>`;
+        return;
+      }
+      const filtered = list.filter(p => {
+        const q = filter.trim().toLowerCase();
+        if(!q) return true;
+        return (p.patientName||'').toLowerCase().includes(q) || (p.doctorName||'').toLowerCase().includes(q);
+      });
+      if(!filtered.length){ savedList.innerHTML = `<div class="text-muted small">No matches.</div>`; return; }
+      filtered.forEach(p=>{
+        const item = document.createElement('div');
+        item.className = 'list-group-item d-flex justify-content-between align-items-start';
+        item.innerHTML = `
+          <div>
+            <div class="fw-semibold">${escapeHtml(p.patientName || '—')}</div>
+            <div class="small text-muted">${escapeHtml(p.doctorName||'—')} • ${p.date || '—'}</div>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary view">View</button>
+            <button class="btn btn-sm btn-outline-warning edit">Edit</button>
+            <button class="btn btn-sm btn-outline-danger del">Delete</button>
+          </div>
+        `;
+        // handlers
+        item.querySelector('.view').addEventListener('click', ()=> {
+          populatePreview(p);
+          window.scrollTo({top:0,behavior:'smooth'});
+        });
+        item.querySelector('.edit').addEventListener('click', ()=> {
+          loadToForm(p);
+          window.scrollTo({top:0,behavior:'smooth'});
+        });
+        item.querySelector('.del').addEventListener('click', ()=> {
+          if(!confirm('Delete this prescription?')) return;
+          let arr = loadSaved();
+          arr = arr.filter(x => x.id !== p.id);
+          saveAll(arr);
+          showToast('Deleted');
+          renderSaved(searchInput.value);
+        });
+        savedList.appendChild(item);
+      });
+    }
+
+    // Save form to storage
+    function saveForm(e){
+      if(e) e.preventDefault();
+      const data = readForm();
+      if(!data.patientName || !data.date){
+        alert('Please fill patient name and date.');
+        return;
+      }
+      const arr = loadSaved();
+      // if editing existing (id present), replace
+      if(data.id){
+        const idx = arr.findIndex(x => x.id === data.id);
+        if(idx !== -1) arr[idx] = data;
+        else arr.push(data);
+        showToast('Updated prescription');
+      } else {
+        data.id = 'p' + Date.now();
+        arr.push(data);
+        showToast('Saved prescription');
+      }
+      saveAll(arr);
+      renderSaved(searchInput.value);
+      // clearForm(); // keep form for convenience
+    }
+
+    // Read form values
+    function readForm(){
+      const meds = Array.from(medicinesList.querySelectorAll('.medicine-row')).map(row => {
+        return {
+          name: row.querySelector('.med-name').value.trim(),
+          dose: row.querySelector('.med-dose').value.trim(),
+          freq: row.querySelector('.med-frequency').value.trim(),
+          days: row.querySelector('.med-days').value.trim()
+        };
+      }).filter(m => m.name);
+      return {
+        id: presForm.dataset.editId || null,
+        patientName: $('patientName').value.trim(),
+        age: $('patientAge').value,
+        gender: $('patientGender').value,
+        doctorName: $('doctorName').value.trim(),
+        date: $('presDate').value,
+        medicines: meds,
+        notes: $('notes').value.trim(),
+        signature: sigDataInput.value || ''
+      };
+    }
+
+    // Populate preview area
+    function populatePreview(p){
+      pvDoctor.textContent = p.doctorName || '—';
+      pvClinic.textContent = ''; // optional
+      pvDate.textContent = p.date || '';
+      pvPatient.innerHTML = `<strong>Patient: ${escapeHtml(p.patientName || '—')}</strong>`;
+      pvMeta.textContent = `Age: ${p.age || '—'} • Gender: ${p.gender || '—'}`;
+      pvMeds.innerHTML = '';
+      (p.medicines || []).forEach(m=>{
+        const li = document.createElement('li');
+        li.textContent = `${m.name}${m.dose ? ' — ' + m.dose : ''}${m.freq ? ' • ' + m.freq : ''}${m.days ? ' • ' + m.days + ' days' : ''}`;
+        pvMeds.appendChild(li);
+      });
+      pvNotes.textContent = p.notes || '—';
+      if(p.signature) pvSig.src = p.signature;
+      else pvSig.src = '';
+    }
+
+    // Load prescription into form for editing
+    function loadToForm(p){
+      presForm.reset();
+      medicinesList.innerHTML = '';
+      $('patientName').value = p.patientName || '';
+      $('patientAge').value = p.age || '';
+      $('patientGender').value = p.gender || '';
+      $('doctorName').value = p.doctorName || '';
+      $('presDate').value = p.date || '';
+      $('notes').value = p.notes || '';
+      sigDataInput.value = p.signature || '';
+      if(p.signature) pvSig.src = p.signature;
+      (p.medicines||[]).forEach(m => addMedicineRow(m));
+      presForm.dataset.editId = p.id;
+      showToast('Loaded to form for editing');
+    }
+
+    // Clear form for new
+    function clearForm(){
+      presForm.reset();
+      medicinesList.innerHTML = '';
+      addMedicineRow(); // start with one row
+      sigCtx.clearRect(0,0,sigCanvas.width, sigCanvas.height);
+      sigDataInput.value = '';
+      pvSig.src = '';
+      delete presForm.dataset.editId;
+    }
+
+    // Export current preview JSON
+    function exportCurrent(){
+      const data = readForm();
+      if(!data.patientName) { alert('Please fill patient name to export.'); return; }
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${data.patientName.replace(/\s+/g,'_')}_prescription.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // Simple toast (alert-like)
+    function showToast(msg){
+      const el = document.createElement('div');
+      el.className = 'toast align-items-center text-bg-dark border-0';
+      el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.zIndex=9999; el.style.padding='10px 14px'; el.style.borderRadius='8px';
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(()=> el.style.opacity='0', 2200);
+      setTimeout(()=> el.remove(), 2500);
+    }
+
+    // Print function - render preview area as print page
+    function printPreview(){
+      const printable = document.createElement('div');
+      printable.style.padding='20px';
+      printable.style.fontFamily='Inter, Arial, sans-serif';
+      printable.innerHTML = previewArea.innerHTML;
+      const w = window.open('', '_blank', 'width=800,height=900,scrollbars=yes');
+      w.document.write(`<html><head><title>Prescription — ${new Date().toLocaleDateString()}</title>`);
+      w.document.write('<style>body{font-family:Inter,Arial,sans-serif;padding:20px} ul{margin:0;padding-left:18px}</style>');
+      w.document.write('</head><body>');
+      w.document.write(printable.innerHTML);
+      w.document.write('</body></html>');
+      w.document.close();
+      w.focus();
+      setTimeout(()=> w.print(), 600);
+    }
+
+    // Fill medicines with a starting row
+    function seed(){
+      addMedicineRow({name:'Paracetamol 500mg', dose:'1 tab', freq:'BD', days:'5'});
+    }
+
+    // -------------------------
+    // Init & event wiring
+    // -------------------------
+    document.addEventListener('DOMContentLoaded', ()=>{
+      initSigPad();
+      seed();
+      renderSaved();
+
+      addMedicineBtn.addEventListener('click', ()=> addMedicineRow());
+      presForm.addEventListener('submit', saveForm);
+      previewBtn.addEventListener('click', ()=> {
+        const data = readForm();
+        if(!data.patientName || !data.date){ alert('Fill patient name & date first'); return; }
+        populatePreview(data);
+        showToast('Preview updated');
+      });
+      exportBtn.addEventListener('click', exportCurrent);
+      printBtn.addEventListener('click', () => {
+        const data = readForm();
+        if(!data.patientName){ if(!confirm('No patient name — print anyway?')) return; }
+        populatePreview(data);
+        printPreview();
+      });
+      searchInput.addEventListener('input', ()=> renderSaved(searchInput.value));
+      clearAllBtn.addEventListener('click', ()=> {
+        if(!confirm('Clear ALL saved prescriptions from this browser?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        renderSaved();
+      });
+      newBtn.addEventListener('click', ()=> { clearForm(); });
+
+      // quick save hotkey: ctrl+s
+      document.addEventListener('keydown', (e)=>{
+        if((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); saveForm(); }
+      });
+
+      // initial preview date
+      presDate.value = new Date().toISOString().slice(0,10);
+      pvDate.textContent = presDate.value;
+      presDate.addEventListener('change', ()=> pvDate.textContent = presDate.value);
+    });
+
+    // Helper: load last saved on double click preview
+    previewArea.addEventListener('dblclick', ()=>{
+      const list = loadSaved();
+      if(list.length) populatePreview(list[list.length-1]);
+    });
+
+    // End of script
+  </script>
+</body>
+</html>

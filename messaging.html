@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messaging & Notifications — Sarasavi</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="css/messaging.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Messaging & Notifications</h1>
+    <p class="muted">Monitor messages and send announcements</p>
+  </div>
+  <div class="top-actions">
+    <button class="btn primary" id="sendNotifBtn"><i class="fa fa-bell"></i> Send Notification</button>
+    <input id="searchInput" class="search" placeholder="Search messages...">
+  </div>
+</header>
+
+<main class="container">
+  <section class="left-col">
+    <div class="table-container">
+      <table id="messagesTable">
+        <thead>
+          <tr>
+            <th>Sender</th>
+            <th>Receiver</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="panel">
+      <h3>Selected Message</h3>
+      <div id="selectedMsgPanel" class="empty">
+        <p>Select a message to view details.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Notification Modal -->
+<div id="notifModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close" id="closeModal"><i class="fa fa-times"></i></button>
+    <h2>Send Notification</h2>
+    <form id="notifForm">
+      <div class="form-row">
+        <label>Recipient</label>
+        <select id="notifRecipient">
+          <option value="all">All Users</option>
+          <option value="doctors">Doctors</option>
+          <option value="patients">Patients</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Message</label>
+        <textarea id="notifMessage" rows="4" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Send</button>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const messages = [
+  {id:'m1', sender:'Kasun Perera', receiver:'Dr. Amali', message:'Need consultation tomorrow', date:'2025-11-20'},
+  {id:'m2', sender:'Dr. Hiran', receiver:'Patient Hema', message:'Please take your meds on time', date:'2025-11-19'},
+  {id:'m3', sender:'Admin', receiver:'All', message:'Hospital will be closed on 25th Nov', date:'2025-11-18'}
+];
+
+const $ = s => document.querySelector(s);
+const tableBody = $('#messagesTable tbody');
+const selectedPanel = $('#selectedMsgPanel');
+
+const modal = $('#notifModal');
+const closeModalBtn = $('#closeModal');
+const cancelBtn = $('#cancelBtn');
+const notifForm = $('#notifForm');
+
+document.getElementById('sendNotifBtn').addEventListener('click',()=>modal.classList.remove('hidden'));
+
+function renderTable(filter=''){
+  tableBody.innerHTML='';
+  const list = messages.filter(m=>{
+    const term = filter.trim().toLowerCase();
+    if(!term) return true;
+    return (m.sender+m.receiver+m.message).toLowerCase().includes(term);
+  });
+  list.forEach(m=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${m.sender}</td>
+      <td>${m.receiver}</td>
+      <td>${m.message.length>30?m.message.slice(0,30)+'...':m.message}</td>
+      <td>${m.date}</td>
+      <td>
+        <button class="btn small view">View</button>
+      </td>
+    `;
+    tr.querySelector('.view').addEventListener('click',()=>selectMessage(m.id));
+    tableBody.appendChild(tr);
+  });
+}
+
+function selectMessage(id){
+  const m = messages.find(x=>x.id===id);
+  if(!m) return;
+  selectedPanel.classList.remove('empty');
+  selectedPanel.innerHTML=`
+    <p><strong>Sender:</strong> ${m.sender}</p>
+    <p><strong>Receiver:</strong> ${m.receiver}</p>
+    <p><strong>Date:</strong> ${m.date}</p>
+    <p><strong>Message:</strong> ${m.message}</p>
+  `;
+}
+
+notifForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  alert('Notification sent successfully!');
+  modal.classList.add('hidden');
+  notifForm.reset();
+});
+
+closeModalBtn.addEventListener('click',()=>modal.classList.add('hidden'));
+cancelBtn.addEventListener('click',()=>modal.classList.add('hidden'));
+
+$('#searchInput').addEventListener('input', e=>renderTable(e.target.value));
+
+renderTable();
+</script>
+</body>
+</html>

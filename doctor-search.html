@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Search & Filter | MediCare Plus</title>
+  <link rel="stylesheet" href="css/doctor-search.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="doctor-search.html" class="active">Doctor Search</a></li>
+        <li><a href="doctor-profiles.html">Doctor Profiles</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Search & Filter Doctors</h1>
+      <p>Find your preferred doctor by specialization, location, or availability.</p>
+    </div>
+  </section>
+
+  <!-- Search Filters -->
+  <section class="search-filters">
+    <div class="container">
+      <h2>Filter Doctors</h2>
+      <form id="filterForm">
+
+        <!-- By Specialization -->
+        <div class="filter-group">
+          <label for="specialization">By Specialization:</label>
+          <select id="specialization">
+            <option value="">Select Specialization</option>
+            <option value="cardiology">Cardiology</option>
+            <option value="pediatrics">Pediatrics</option>
+            <option value="radiology">Radiology</option>
+            <option value="orthopedics">Orthopedics</option>
+            <option value="neurology">Neurology</option>
+            <option value="laboratory">Laboratory</option>
+          </select>
+        </div>
+
+        <!-- By Location -->
+        <div class="filter-group">
+          <label for="location">By Location:</label>
+          <select id="location">
+            <option value="">Select Location</option>
+            <option value="colombo">Colombo</option>
+            <option value="kandy">Kandy</option>
+            <option value="galle">Galle</option>
+            <option value="negombo">Negombo</option>
+          </select>
+        </div>
+
+        <!-- By Availability -->
+        <div class="filter-group">
+          <label for="availability">By Availability:</label>
+          <select id="availability">
+            <option value="">Select Availability</option>
+            <option value="mon-wed">Mon-Wed</option>
+            <option value="tue-thu">Tue-Thu</option>
+            <option value="fri-sat">Fri-Sat</option>
+          </select>
+        </div>
+
+        <button type="button" id="searchBtn" class="btn">Search</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Search Results -->
+  <section class="search-results">
+    <div class="container" id="resultsContainer">
+      <!-- Results will be displayed here -->
+      <p>Use the filters above to search for doctors.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+  <script src="js/doctor-search.js"></script>
+</body>
+</html>

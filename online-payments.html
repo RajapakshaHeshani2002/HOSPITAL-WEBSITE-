@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Payments | MediCare Plus</title>
+  <link rel="stylesheet" href="css/online-payments.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about-us.html">About Us</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="doctors.html">Doctors</a></li>
+        <li><a href="book-appointment.html">Book Appointment</a></li>
+        <li><a href="online-payments.html" class="active">Online Payments</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <h1>Secure Online Payments</h1>
+        <p>Pay your hospital bills, appointments, and health packages securely and instantly online. Safe, fast, and convenient for patients.</p>
+        <img src="https://cyberhoot.com/wp-content/uploads/2022/11/Online-Payment-Security-v2.jpg" alt="Online Payment" class="hero-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- Payment Form -->
+  <section class="payment-section">
+    <div class="container">
+      <h2>Make a Payment</h2>
+      <p>Fill in your details below to process your payment securely.</p>
+      <form action="payment_process.php" method="POST"> 
+       <div class="form-group">
+          <label for="patientName">Full Name</label>
+          <input type="text" id="patientName" name="patientName" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount (USD)</label>
+          <input type="number" id="amount" name="amount" placeholder="Enter amount" required>
+        </div>
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input type="text" id="cardNumber" name="cardNumber" placeholder="XXXX-XXXX-XXXX-XXXX" required>
+        </div>
+        <div class="form-group">
+          <label for="expiry">Expiry Date</label>
+          <input type="month" id="expiry" name="expiry" required>
+        </div>
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input type="password" id="cvv" name="cvv" placeholder="XXX" required>
+        </div>
+        <button type="submit" class="btn-submit">Pay Now</button>
+      </form>
+        
+      
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+    <p>Follow us on 🌐 Facebook | 🐦 Twitter | 📸 Instagram</p>
+  </footer>
+
+</body>
+</html>

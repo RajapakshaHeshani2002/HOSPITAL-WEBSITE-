@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback & Ratings | MediCare Plus</title>
+  <link rel="stylesheet" href="css/feedback.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+       
+        <li><a href="my-appointments.html">My Appointments</a></li>
+        <li><a href="medical-reports.html">Medical Reports</a></li>
+        <li><a href="feedback.html" class="active">Feedback & Ratings</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Share Your Feedback</h1>
+      <p>Help us improve our services by sharing your honest opinion.</p>
+    </div>
+    <div class="hero-img">
+      <img src="https://thumbs.dreamstime.com/z/degree-feedback-customer-satisfaction-control-outline-diagram-sales-service-quality-peers-project-manager-direct-286832125.jpg" alt="Feedback">
+    </div>
+  </section>
+
+  <!-- Submit Feedback -->
+  <section class="submit-feedback">
+    <h2>Submit Your Feedback</h2>
+    <form action="feedback.php" method="POST">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+    <textarea name="feedback" rows="5" placeholder="Type your feedback here..." required></textarea>
+    <label for="rating">Your Rating:</label>
+    <select name="rating" required>
+        <option value="">Select rating</option>
+        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+        <option value="4">⭐⭐⭐⭐ Very Good</option>
+        <option value="3">⭐⭐⭐ Good</option>
+        <option value="2">⭐⭐ Fair</option>
+        <option value="1">⭐ Poor</option>
+    </select>
+    <button type="submit">Submit Feedback</button>
+</form>
+
+  </section>
+
+  <!-- Ratings Summary -->
+  <section class="ratings-summary">
+    <h2>Ratings Summary</h2>
+    <div class="summary-cards">
+      <div class="summary-card">
+        <h3>Average Rating</h3>
+        <p id="average-rating">0 ⭐</p>
+      </div>
+      <div class="summary-card">
+        <h3>Total Reviews</h3>
+        <p id="total-reviews">0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- My Reviews -->
+  <section class="my-reviews">
+    <h2>My Reviews</h2>
+    <div id="reviews-container">
+      <!-- Reviews will appear here -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+  <script src="js/feedback.js"></script>
+</body>
+</html>

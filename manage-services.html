@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta-name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Services - MediCare </title>
+    <link rel="stylesheet" href="css/manage-services.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Manage Services</h1>
+        <button class="add-btn">+ Add New Service</button>
+    </header>
+
+    <!-- Search Area -->
+    <div class="search-area">
+        <input type="text" placeholder="Search service by name...">
+        <select>
+            <option value="">Filter by Category</option>
+            <option>Cardiology</option>
+            <option>Pediatrics</option>
+            <option>Radiology</option>
+            <option>Dental</option>
+        </select>
+    </div>
+
+    <!-- Services Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Category</th>
+                <th>Doctor in Charge</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>ECG Scan</td>
+                <td>Cardiology</td>
+                <td>Dr. Saman</td>
+                <td>Rs. 4,500</td>
+                <td><span class="status active">Active</span></td>
+                <td>
+                    <button class="edit">Edit</button>
+                    <button class="delete">Delete</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Child Growth Checkup</td>
+                <td>Pediatrics</td>
+                <td>Dr. Nayana</td>
+                <td>Rs. 2,000</td>
+                <td><span class="status active">Active</span></td>
+                <td>
+                    <button class="edit">Edit</button>
+                    <button class="delete">Delete</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>X-Ray</td>
+                <td>Radiology</td>
+                <td>Dr. Yasantha</td>
+                <td>Rs. 3,200</td>
+                <td><span class="status inactive">Inactive</span></td>
+                <td>
+                    <button class="edit">Edit</button>
+                    <button class="delete">Delete</button>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

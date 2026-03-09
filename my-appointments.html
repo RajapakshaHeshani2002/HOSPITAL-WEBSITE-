@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Appointments | MediCare Plus</title>
+  <link rel="stylesheet" href="css/my-appointments.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="my-appointments.html" class="active">Appointments</a></li>
+        <li><a href="medical-reports.html">Reports</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="logout.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="overlay">
+      <h1>My Appointments</h1>
+      <p>Track your past and upcoming hospital visits easily 🏥</p>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="filter-section">
+    <input type="text" id="searchBar" placeholder="🔍 Search by Doctor or Department">
+    <select id="statusFilter">
+      <option value="all">All Statuses</option>
+      <option value="Upcoming">Upcoming</option>
+      <option value="Completed">Completed</option>
+      <option value="Cancelled">Cancelled</option>
+    </select>
+    <input type="date" id="dateFilter">
+  </section>
+
+  <!-- Appointment Table -->
+  <section class="appointments-section">
+    <table id="appointmentTable">
+      <thead>
+        <tr>
+          <th>Appointment ID</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Doctor</th>
+          <th>Department</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="appointmentBody">
+        <!-- JS will load data here -->
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+  <script src="js/my-appointments.js"></script>
+</body>
+</html>

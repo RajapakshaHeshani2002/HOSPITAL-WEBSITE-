@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Service Management — Sarasavi</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="css/services.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Service Management</h1>
+    <p class="muted">Add, update, remove medical services and track usage</p>
+  </div>
+  <div class="top-actions">
+    <button id="addServiceBtn" class="btn primary"><i class="fa fa-plus"></i> Add Service</button>
+    <input id="searchInput" class="search" placeholder="Search services...">
+  </div>
+</header>
+
+<main class="container">
+  <section class="left-col">
+    <div class="table-container">
+      <table id="servicesTable">
+        <thead>
+          <tr>
+            <th>Service Name</th>
+            <th>Description</th>
+            <th>Usage Count</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="panel">
+      <h3>Selected Service</h3>
+      <div id="selectedServicePanel" class="empty">
+        <p>Select a service to view details.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Add/Edit Modal -->
+<div id="serviceModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close" id="closeModal"><i class="fa fa-times"></i></button>
+    <h2 id="modalTitle">Add Service</h2>
+    <form id="serviceForm">
+      <div class="form-row">
+        <label>Service Name</label>
+        <input type="text" id="serviceName" required>
+      </div>
+      <div class="form-row">
+        <label>Description</label>
+        <textarea id="serviceDescription" rows="3"></textarea>
+      </div>
+      <div class="form-row">
+        <label>Usage Count</label>
+        <input type="number" id="serviceUsage" min="0" value="0" required>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Save</button>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const services = [
+  {id:'s1', name:'Cardiology', description:'Heart-related services', usage:45},
+  {id:'s2', name:'Radiology', description:'X-ray, MRI, CT scans', usage:32},
+  {id:'s3', name:'Pediatrics', description:'Child health services', usage:27},
+];
+
+const $ = s => document.querySelector(s);
+const tableBody = $('#servicesTable tbody');
+const selectedPanel = $('#selectedServicePanel');
+
+const modal = $('#serviceModal');
+const closeModalBtn = $('#closeModal');
+const cancelBtn = $('#cancelBtn');
+const form = $('#serviceForm');
+const modalTitle = $('#modalTitle');
+const addBtn = $('#addServiceBtn');
+const searchInput = $('#searchInput');
+
+let editingId = null;
+
+function renderTable(filter=''){
+  tableBody.innerHTML='';
+  const list = services.filter(s=>{
+    const term = filter.trim().toLowerCase();
+    if(!term) return true;
+    return (s.name+s.description).toLowerCase().includes(term);
+  });
+  list.forEach(s=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${s.name}</td>
+      <td>${s.description}</td>
+      <td>${s.usage}</td>
+      <td>
+        <button class="btn small view">View</button>
+        <button class="btn small outline edit">Edit</button>
+        <button class="btn small danger delete">Remove</button>
+      </td>
+    `;
+    tr.querySelector('.view').addEventListener('click',()=>selectService(s.id));
+    tr.querySelector('.edit').addEventListener('click',()=>openEdit(s.id));
+    tr.querySelector('.delete').addEventListener('click',()=>removeService(s.id));
+    tableBody.appendChild(tr);
+  });
+}
+
+function selectService(id){
+  const s = services.find(x=>x.id===id);
+  if(!s) return;
+  selectedPanel.classList.remove('empty');
+  selectedPanel.innerHTML=`
+    <p><strong>Name:</strong> ${s.name}</p>
+    <p><strong>Description:</strong> ${s.description}</p>
+    <p><strong>Usage Count:</strong> ${s.usage}</p>
+  `;
+}
+
+function openEdit(id){
+  editingId=id;
+  const s = services.find(x=>x.id===id);
+  if(!s) return;
+  modalTitle.textContent='Edit Service';
+  $('#serviceName').value=s.name;
+  $('#serviceDescription').value=s.description;
+  $('#serviceUsage').value=s.usage;
+  modal.classList.remove('hidden');
+}
+
+function removeService(id){
+  if(!confirm('Remove this service?')) return;
+  const idx = services.findIndex(s=>s.id===id);
+  if(idx>=0){
+    services.splice(idx,1);
+    renderTable(searchInput.value);
+    selectedPanel.innerHTML='<p>Select a service to view details.</p>';
+    selectedPanel.classList.add('empty');
+  }
+}
+
+addBtn.addEventListener('click',()=>{
+  editingId=null;
+  form.reset();
+  modalTitle.textContent='Add Service';
+  modal.classList.remove('hidden');
+});
+
+closeModalBtn.addEventListener('click',()=>modal.classList.add('hidden'));
+cancelBtn.addEventListener('click',()=>modal.classList.add('hidden'));
+
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const newService={
+    id: editingId||('s'+Date.now()),
+    name: $('#serviceName').value.trim(),
+    description: $('#serviceDescription').value.trim(),
+    usage: parseInt($('#serviceUsage').value)
+  };
+  if(editingId){
+    const idx = services.findIndex(s=>s.id===editingId);
+    if(idx>=0) services[idx]={...services[idx], ...newService};
+  } else {
+    services.push(newService);
+  }
+  modal.classList.add('hidden');
+  editingId=null;
+  renderTable(searchInput.value);
+});
+
+searchInput.addEventListener('input', e=>renderTable(e.target.value));
+
+renderTable();
+</script>
+</body>
+</html>

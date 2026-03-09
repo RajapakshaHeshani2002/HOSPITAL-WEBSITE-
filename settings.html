@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - MediCare </title>
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Settings</h1>
+        <p>Customize your system preferences</p>
+    </header>
+
+    <!-- GENERAL SETTINGS -->
+    <section class="card">
+        <h2>General Settings</h2>
+
+        <div class="setting-row">
+            <label>System Name:</label>
+            <input type="text" value="UnityCare Hospital">
+        </div>
+
+        <div class="setting-row">
+            <label>Timezone:</label>
+            <select>
+                <option>GMT +5:30 (Sri Lanka)</option>
+                <option>GMT +5:00</option>
+                <option>GMT +6:00</option>
+            </select>
+        </div>
+
+        <div class="setting-row">
+            <label>Language:</label>
+            <select>
+                <option>English</option>
+                <option>Sinhala</option>
+                <option>Tamil</option>
+            </select>
+        </div>
+
+        <button class="save-btn">Save Changes</button>
+    </section>
+
+
+    <!-- NOTIFICATION SETTINGS -->
+    <section class="card">
+        <h2>Notification Settings</h2>
+
+        <div class="toggle-row">
+            <span>Email Notifications</span>
+            <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-row">
+            <span>SMS Alerts</span>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="toggle-row">
+            <span>Appointment Reminders</span>
+            <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <button class="save-btn">Update Notifications</button>
+    </section>
+
+
+    <!-- ACCOUNT SETTINGS -->
+    <section class="card">
+        <h2>Account Settings</h2>
+
+        <div class="setting-row">
+            <label>Admin Name:</label>
+            <input type="text" value="Admin User">
+        </div>
+
+        <div class="setting-row">
+            <label>Email:</label>
+            <input type="email" value="admin@unitycare.com">
+        </div>
+
+        <div class="setting-row">
+            <label>New Password:</label>
+            <input type="password" placeholder="Enter new password">
+        </div>
+
+        <button class="save-btn">Update Account</button>
+    </section>
+
+
+</div>
+
+</body>
+</html>

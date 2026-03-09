@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health Blog / Tips Management — Sarasavi</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="css/adminhealthblog.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Health Blog / Tips Management</h1>
+    <p class="muted">Manage articles submitted by doctors or staff</p>
+  </div>
+  <div class="top-actions">
+    <input id="searchInput" class="search" placeholder="Search posts...">
+  </div>
+</header>
+
+<main class="container">
+  <section class="left-col">
+    <div class="table-container">
+      <table id="blogTable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="panel">
+      <h3>Selected Post</h3>
+      <div id="selectedPostPanel" class="empty">
+        <p>Select a post to view details.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close" id="closeModal"><i class="fa fa-times"></i></button>
+    <h2>Edit Blog Post</h2>
+    <form id="editForm">
+      <div class="form-row">
+        <label>Title</label>
+        <input type="text" id="postTitle" required>
+      </div>
+      <div class="form-row">
+        <label>Content</label>
+        <textarea id="postContent" rows="5" required></textarea>
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="postStatus">
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Save Changes</button>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const posts = [
+  {id:'b1', title:'Healthy Eating Tips', author:'Dr. Kasun', date:'2025-11-20', status:'Pending', content:'Eat more fruits and vegetables daily.'},
+  {id:'b2', title:'Exercise for Heart', author:'Dr. Amali', date:'2025-11-19', status:'Approved', content:'30 min walk daily improves heart health.'},
+  {id:'b3', title:'Child Nutrition', author:'Dr. Hiran', date:'2025-11-18', status:'Pending', content:'Include balanced diet for kids.'}
+];
+
+const $ = s => document.querySelector(s);
+const tableBody = $('#blogTable tbody');
+const selectedPanel = $('#selectedPostPanel');
+
+const modal = $('#editModal');
+const closeModalBtn = $('#closeModal');
+const cancelBtn = $('#cancelBtn');
+const editForm = $('#editForm');
+
+let editingId = null;
+
+function renderTable(filter=''){
+  tableBody.innerHTML='';
+  const list = posts.filter(p=>{
+    const term = filter.trim().toLowerCase();
+    if(!term) return true;
+    return (p.title+p.author+p.status+p.content).toLowerCase().includes(term);
+  });
+  list.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${p.title}</td>
+      <td>${p.author}</td>
+      <td>${p.date}</td>
+      <td>${p.status}</td>
+      <td>
+        <button class="btn small view">View</button>
+        <button class="btn small outline edit">Edit</button>
+        <button class="btn small danger delete">Delete</button>
+        <button class="btn small primary approve">Approve</button>
+      </td>
+    `;
+    tr.querySelector('.view').addEventListener('click',()=>selectPost(p.id));
+    tr.querySelector('.edit').addEventListener('click',()=>openEdit(p.id));
+    tr.querySelector('.delete').addEventListener('click',()=>deletePost(p.id));
+    tr.querySelector('.approve').addEventListener('click',()=>approvePost(p.id));
+    tableBody.appendChild(tr);
+  });
+}
+
+function selectPost(id){
+  const p = posts.find(x=>x.id===id);
+  if(!p) return;
+  selectedPanel.classList.remove('empty');
+  selectedPanel.innerHTML=`
+    <p><strong>Title:</strong> ${p.title}</p>
+    <p><strong>Author:</strong> ${p.author}</p>
+    <p><strong>Date:</strong> ${p.date}</p>
+    <p><strong>Status:</strong> ${p.status}</p>
+    <p><strong>Content:</strong> ${p.content}</p>
+  `;
+}
+
+function openEdit(id){
+  editingId=id;
+  const p = posts.find(x=>x.id===id);
+  if(!p) return;
+  $('#postTitle').value=p.title;
+  $('#postContent').value=p.content;
+  $('#postStatus').value=p.status;
+  modal.classList.remove('hidden');
+}
+
+function deletePost(id){
+  if(!confirm('Are you sure to delete this post?')) return;
+  const idx = posts.findIndex(p=>p.id===id);
+  if(idx>=0) posts.splice(idx,1);
+  renderTable($('#searchInput').value);
+  selectedPanel.innerHTML='<p>Select a post to view details.</p>';
+  selectedPanel.classList.add('empty');
+}
+
+function approvePost(id){
+  const p = posts.find(x=>x.id===id);
+  if(!p) return;
+  p.status='Approved';
+}
