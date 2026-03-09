@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Appointment | MediCare Plus</title>
+  <link rel="stylesheet" href="css/book-appointment.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="doctor-search.html">Doctor Search</a></li>
+        <li><a href="doctor-profiles.html">Doctor Profiles</a></li>
+        <li><a href="book-appointment.html" class="active">Book Appointment</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-overlay">
+      <div class="hero-text">
+        <h1>Book Your Appointment</h1>
+        <p>Schedule a visit with our expert doctors easily and quickly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Appointment Form -->
+  <section class="appointment-form-section">
+    <div class="container">
+      <h2>Appointment Details</h2>
+      <form action="appointment_process.php" method="POST">
+  
+  <div class="form-group">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="full_name" placeholder="Enter your full name" required>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email Address</label>
+    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+  </div>
+
+  <div class="form-group">
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" name="phone_number" placeholder="Enter your phone number" required>
+  </div>
+
+  <div class="form-group">
+    <label for="doctor">Select Doctor</label>
+    <select id="doctor" name="doctor" required>
+      <option value="">Choose Doctor</option>
+      <option value="Dr. John Silva (Cardiology)">Dr. John Silva (Cardiology)</option>
+      <option value="Dr. Amanda Smith (Cardiology)" >Dr. Amanda Smith (Cardiology) </option>
+      <option value="Dr. Kavindi Perera (Pediatrics)">Dr. Kavindi Perera (Pediatrics)</option>
+      <option value="Dr. Maya Fernando (Radiology)">Dr. Maya Fernando (Radiology)</option>
+      <option value="Dr. Roshan Fernando (Neurologist)">Dr. Roshan Fernando (Neurologist)</option>
+      <option value="Dr. Kavindi Perera (Pediatrician)">Dr. Kavindi Perera (Pediatrician)</option>
+      <option value="Dr. Sunethra Jayasinghe (Orthopedic Surgeon)">Dr. Sunethra Jayasinghe (Orthopedic Surgeon)</option>
+      <option value="Dr. Arjuna Perera(Radiologists)">Dr. Arjuna Perera(Radiologists)</option>
+      <option value="Dr. Samanthi Wickramasinghe(Radiologists)">Dr. Samanthi Wickramasinghe(Radiologists)</option>
+      <option value="Dr. Niroshan Silva(Radiologists)">Dr. Niroshan Silva(Radiologists)</option>
+      <option value="Dr. Ruwan Jayasekara(Orthopedic)">Dr. Ruwan Jayasekara(Orthopedic)</option>
+      <option value="Dr. Nadeesha Fernando(Orthopedic)">Dr. Nadeesha Fernando(Orthopedic)</option>
+      <option value="Dr. Thilina Silva(Orthopedic)">Dr. Thilina Silva(Orthopedic)</option>
+    
+      
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="date">Select Date</label>
+    <input type="date" id="date" name="appointment_date" required>
+  </div>
+
+  <div class="form-group">
+    <label for="time">Select Time</label>
+    <input type="time" id="time" name="appointment_time" required>
+  </div>
+
+  <button type="submit" class="btn">Book Appointment</button>
+</form>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+</body>
+</html>

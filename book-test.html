@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Test | MediCare Plus</title>
+  <link rel="stylesheet" href="css/book-test.css">
+</head>
+<body>
+   <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="dropdown">
+          <a href="#">About Us</a>
+          <ul class="dropdown-menu">
+            <li><a href="our-mission.html">Our Mission</a></li>
+            <li><a href="team.html">Our Team</a></li>
+            <li><a href="contact.html">Contact Information</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#">Services</a>
+          <ul class="dropdown-menu">
+            <li><a href="cardiology.html">Cardiology</a></li>
+            <li><a href="pediatrics.html">Pediatrics</a></li>
+            <li><a href="radiolagy.html">Radiology</a></li>
+            <li><a href="orthopedics.html">Orthopedics</a></li>
+            <li><a href="neurology.html">Neurology</a></li>
+            <li><a href="laboratory.html" class="active">Laboratory</a></li>
+          </ul>
+        </li>
+        <li><a href="doctors.html">Doctors</a></li>
+        <li><a href="appointments.html">Appointments</a></li>
+        <li><a href="login.html" class="btn-login">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Book a Laboratory Test</h1>
+    <p>Quick, secure, and hassle-free — schedule your diagnostic test today!</p>
+  </section>
+
+  <!-- Booking Form -->
+  <section class="booking-section">
+    <div class="booking-form-container">
+      <h2>Fill in Your Details</h2>
+      <form id="testForm" action="php/book-test.php" method="POST">
+        <div class="form-group">
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" placeholder="Enter your name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="Enter your contact number" required>
+        </div>
+
+        <div class="form-group">
+          <label for="test-type">Select Test Type</label>
+          <select id="test-type" required>
+            <option value="">-- Choose a Test --</option>
+            <option value="blood">Blood Test</option>
+            <option value="urine">Urine Analysis</option>
+            <option value="microbiology">Microbiology</option>
+            <option value="pathology">Pathology</option>
+            <option value="covid">COVID-19 PCR Test</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Preferred Date</label>
+          <input type="date" id="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="time">Preferred Time</label>
+          <input type="time" id="time" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Book Test</button>
+      </form>
+
+      <div id="confirmation" class="confirmation-message"></div>
+    </div>
+
+    <div class="booking-image">
+      <img src="images/image47.jpeg" alt="Book Lab Test">
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 MediCare Plus. All rights reserved.</p>
+  </footer>
+
+  <script src="js/book-test.js"></script>
+</body>
+</html>

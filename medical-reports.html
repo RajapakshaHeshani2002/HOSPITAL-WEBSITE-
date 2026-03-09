@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Reports | MediCare Plus</title>
+  <link rel="stylesheet" href="css/medical-reports.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="my-appointments.html">Appointments</a></li>
+        <li><a href="medical-reports.html" class="active">Reports</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="logout.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="overlay">
+      <h1>My Medical Reports</h1>
+      <p>Access and download your lab, imaging, and consultation reports anytime 🧾</p>
+    </div>
+  </section>
+
+  <!-- Filter/Search Section -->
+  <section class="filter-section">
+    <input type="text" id="searchInput" placeholder="🔍 Search report by name or doctor">
+    <select id="typeFilter">
+      <option value="all">All Types</option>
+      <option value="Lab Test">Lab Test</option>
+      <option value="Radiology">Radiology</option>
+      <option value="Consultation">Consultation</option>
+    </select>
+    <input type="date" id="dateFilter">
+  </section>
+
+  <!-- Reports Section -->
+  <section class="reports-section" id="reportsContainer">
+    <!-- JS will load reports here -->
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+  <script src="js/medical-reports.js"></script>
+</body>
+</html>

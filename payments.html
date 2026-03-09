@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Online Payments Management — Sarasavi</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="css/payments.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Online Payments Management</h1>
+    <p class="muted">Track consultations payments and issue receipts</p>
+  </div>
+  <div class="top-actions">
+    <input id="searchInput" class="search" placeholder="Search payments...">
+  </div>
+</header>
+
+<main class="container">
+  <section class="left-col">
+    <div class="table-container">
+      <table id="paymentsTable">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Amount (LKR)</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="panel">
+      <h3>Selected Payment</h3>
+      <div id="selectedPaymentPanel" class="empty">
+        <p>Select a payment to view details.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Receipt Modal -->
+<div id="receiptModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close" id="closeModal"><i class="fa fa-times"></i></button>
+    <h2>Issue Receipt</h2>
+    <form id="receiptForm">
+      <div class="form-row">
+        <label>Patient</label>
+        <input type="text" id="receiptPatient" readonly>
+      </div>
+      <div class="form-row">
+        <label>Amount (LKR)</label>
+        <input type="text" id="receiptAmount" readonly>
+      </div>
+      <div class="form-row">
+        <label>Date</label>
+        <input type="text" id="receiptDate" readonly>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Generate Receipt</button>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const payments = [
+  {id:'p1', patient:'Kasun Perera', amount:2500, date:'2025-11-21', status:'Paid'},
+  {id:'p2', patient:'Amali Fernando', amount:1800, date:'2025-11-21', status:'Pending'},
+  {id:'p3', patient:'Hiran Silva', amount:3200, date:'2025-11-22', status:'Paid'},
+];
+
+const $ = s => document.querySelector(s);
+const tableBody = $('#paymentsTable tbody');
+const selectedPanel = $('#selectedPaymentPanel');
+
+const modal = $('#receiptModal');
+const closeModalBtn = $('#closeModal');
+const cancelBtn = $('#cancelBtn');
+const receiptForm = $('#receiptForm');
+
+let issuingId = null;
+
+function renderTable(filter=''){
+  tableBody.innerHTML='';
+  const list = payments.filter(p=>{
+    const term = filter.trim().toLowerCase();
+    if(!term) return true;
+    return (p.patient+p.status).toLowerCase().includes(term);
+  });
+  list.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${p.patient}</td>
+      <td>${p.amount.toLocaleString()}</td>
+      <td>${p.date}</td>
+      <td>${p.status}</td>
+      <td>
+        <button class="btn small view">View</button>
+        <button class="btn small primary issue">Issue Receipt</button>
+      </td>
+    `;
+    tr.querySelector('.view').addEventListener('click',()=>selectPayment(p.id));
+    tr.querySelector('.issue').addEventListener('click',()=>openReceipt(p.id));
+    tableBody.appendChild(tr);
+  });
+}
+
+function selectPayment(id){
+  const p = payments.find(x=>x.id===id);
+  if(!p) return;
+  selectedPanel.classList.remove('empty');
+  selectedPanel.innerHTML=`
+    <p><strong>Patient:</strong> ${p.patient}</p>
+    <p><strong>Amount:</strong> LKR ${p.amount.toLocaleString()}</p>
+    <p><strong>Date:</strong> ${p.date}</p>
+    <p><strong>Status:</strong> ${p.status}</p>
+  `;
+}
+
+function openReceipt(id){
+  issuingId=id;
+  const p = payments.find(x=>x.id===id);
+  if(!p) return;
+  $('#receiptPatient').value = p.patient;
+  $('#receiptAmount').value = 'LKR '+p.amount.toLocaleString();
+  $('#receiptDate').value = p.date;
+  modal.classList.remove('hidden');
+}
+
+receiptForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  alert('Receipt generated successfully!');
+  modal.classList.add('hidden');
+  issuingId=null;
+  receiptForm.reset();
+});
+
+closeModalBtn.addEventListener('click',()=>{modal.classList.add('hidden'); issuingId=null; receiptForm.reset();});
+cancelBtn.addEventListener('click',()=>{modal.classList.add('hidden'); issuingId=null; receiptForm.reset();});
+
+$('#searchInput').addEventListener('input', e=>renderTable(e.target.value));
+
+renderTable();
+</script>
+</body>
+</html>

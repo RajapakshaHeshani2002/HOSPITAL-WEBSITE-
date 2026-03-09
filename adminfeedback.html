@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feedback & Ratings — Sarasavi</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="css/adminfeedback.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Feedback & Ratings Overview</h1>
+    <p class="muted">View patient feedback and track satisfaction</p>
+  </div>
+  <div class="top-actions">
+    <input id="searchInput" class="search" placeholder="Search feedback...">
+  </div>
+</header>
+
+<main class="container">
+  <section class="left-col">
+    <div class="table-container">
+      <table id="feedbackTable">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Service</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="panel">
+      <h3>Selected Feedback</h3>
+      <div id="selectedFeedbackPanel" class="empty">
+        <p>Select feedback to view details.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Respond Modal -->
+<div id="respondModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close" id="closeModal"><i class="fa fa-times"></i></button>
+    <h2>Respond to Feedback</h2>
+    <form id="respondForm">
+      <div class="form-row">
+        <label>Response</label>
+        <textarea id="responseText" rows="3" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Send</button>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const feedbacks = [
+  {id:'f1', patient:'Kasun Perera', service:'Cardiology', rating:5, comment:'Excellent service!'},
+  {id:'f2', patient:'Amali Fernando', service:'Radiology', rating:3, comment:'Long waiting time.'},
+  {id:'f3', patient:'Hiran Silva', service:'Pediatrics', rating:4, comment:'Friendly staff.'}
+];
+
+const $ = s => document.querySelector(s);
+const tableBody = $('#feedbackTable tbody');
+const selectedPanel = $('#selectedFeedbackPanel');
+
+const modal = $('#respondModal');
+const closeModalBtn = $('#closeModal');
+const cancelBtn = $('#cancelBtn');
+const respondForm = $('#respondForm');
+
+let replyingId = null;
+
+function renderTable(filter=''){
+  tableBody.innerHTML='';
+  const list = feedbacks.filter(f=>{
+    const term = filter.trim().toLowerCase();
+    if(!term) return true;
+    return (f.patient+f.service+f.comment).toLowerCase().includes(term);
+  });
+  list.forEach(f=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${f.patient}</td>
+      <td>${f.service}</td>
+      <td>${f.rating} ⭐</td>
+      <td>${f.comment}</td>
+      <td>
+        <button class="btn small view">View</button>
+        <button class="btn small outline respond">Respond</button>
+      </td>
+    `;
+    tr.querySelector('.view').addEventListener('click',()=>selectFeedback(f.id));
+    tr.querySelector('.respond').addEventListener('click',()=>openRespond(f.id));
+    tableBody.appendChild(tr);
+  });
+}
+
+function selectFeedback(id){
+  const f = feedbacks.find(x=>x.id===id);
+  if(!f) return;
+  selectedPanel.classList.remove('empty');
+  selectedPanel.innerHTML=`
+    <p><strong>Patient:</strong> ${f.patient}</p>
+    <p><strong>Service:</strong> ${f.service}</p>
+    <p><strong>Rating:</strong> ${f.rating} ⭐</p>
+    <p><strong>Comment:</strong> ${f.comment}</p>
+  `;
+}
+
+function openRespond(id){
+  replyingId=id;
+  modal.classList.remove('hidden');
+}
+
+respondForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  alert('Response sent to patient!');
+  modal.classList.add('hidden');
+  replyingId=null;
+  respondForm.reset();
+});
+
+closeModalBtn.addEventListener('click',()=>{modal.classList.add('hidden'); replyingId=null; respondForm.reset();});
+cancelBtn.addEventListener('click',()=>{modal.classList.add('hidden'); replyingId=null; respondForm.reset();});
+
+$('#searchInput').addEventListener('input', e=>renderTable(e.target.value));
+
+renderTable();
+</script>
+</body>
+</html>

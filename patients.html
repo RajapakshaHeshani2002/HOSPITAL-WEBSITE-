@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patients Management — Sarasavi</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="css/patients.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Patients Management</h1>
+    <p class="muted">View, update records, and monitor activity</p>
+  </div>
+  <div class="top-actions">
+    <button id="addPatientBtn" class="btn primary"><i class="fa fa-plus"></i> Add Patient</button>
+    <input id="searchInput" class="search" placeholder="Search by name, email, or ID...">
+  </div>
+</header>
+
+<main class="container">
+  <section class="left-col">
+    <div class="table-container">
+      <table id="patientsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="panel">
+      <h3>Selected Patient</h3>
+      <div id="selectedPatientPanel" class="empty">
+        <p>Select a patient to view details.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Add/Edit Modal -->
+<div id="patientModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close" id="closeModal"><i class="fa fa-times"></i></button>
+    <h2 id="modalTitle">Add Patient</h2>
+    <form id="patientForm" class="form">
+      <div class="form-row">
+        <label>Full Name</label>
+        <input type="text" id="patientName" required>
+      </div>
+      <div class="form-row">
+        <label>Email</label>
+        <input type="email" id="patientEmail" required>
+      </div>
+      <div class="form-row">
+        <label>Phone</label>
+        <input type="tel" id="patientPhone" required>
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="patientStatus">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Notes</label>
+        <textarea id="patientNotes" rows="3"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Save</button>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const patients = [
+  {id:'p1', name:'Kasun Perera', email:'kasun@gmail.com', phone:'0712345678', status:'Active', notes:'Allergic to penicillin.'},
+  {id:'p2', name:'Amali Fernando', email:'amali@yahoo.com', phone:'0723456789', status:'Active', notes:'Diabetic.'},
+  {id:'p3', name:'Hiran Silva', email:'hiran@hotmail.com', phone:'0756789123', status:'Inactive', notes:'Recovered from flu.'}
+];
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+const tableBody = $('#patientsTable tbody');
+const selectedPanel = $('#selectedPatientPanel');
+const modal = $('#patientModal');
+const form = $('#patientForm');
+const addBtn = $('#addPatientBtn');
+const closeModalBtn = $('#closeModal');
+const cancelBtn = $('#cancelBtn');
+const modalTitle = $('#modalTitle');
+const searchInput = $('#searchInput');
+
+let editingId = null;
+
+function renderTable(filter='') {
+  tableBody.innerHTML = '';
+  const list = patients.filter(p => {
+    const term = filter.trim().toLowerCase();
+    if(!term) return true;
+    return (p.name+p.email+p.phone+p.status).toLowerCase().includes(term);
+  });
+  list.forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.id}</td>
+      <td>${p.name}</td>
+      <td>${p.email}</td>
+      <td>${p.phone}</td>
+      <td>${p.status}</td>
+      <td>
+        <button class="btn small view">View</button>
+        <button class="btn small outline edit">Edit</button>
+        <button class="btn small danger delete">Remove</button>
+      </td>
+    `;
+    tr.querySelector('.view').addEventListener('click',()=>selectPatient(p.id));
+    tr.querySelector('.edit').addEventListener('click',()=>openEdit(p.id));
+    tr.querySelector('.delete').addEventListener('click',()=>removePatient(p.id));
+    tableBody.appendChild(tr);
+  });
+}
+
+function selectPatient(id){
+  const p = patients.find(x=>x.id===id);
+  if(!p) return;
+  selectedPanel.classList.remove('empty');
+  selectedPanel.innerHTML = `
+    <p><strong>ID:</strong> ${p.id}</p>
+    <p><strong>Name:</strong> ${p.name}</p>
+    <p><strong>Email:</strong> ${p.email}</p>
+    <p><strong>Phone:</strong> ${p.phone}</p>
+    <p><strong>Status:</strong> ${p.status}</p>
+    <p><strong>Notes:</strong> ${p.notes||'-'}</p>
+  `;
+}
+
+function openEdit(id){
+  editingId=id;
+  const p = patients.find(x=>x.id===id);
+  if(!p) return;
+  modalTitle.textContent='Edit Patient';
+  $('#patientName').value=p.name;
+  $('#patientEmail').value=p.email;
+  $('#patientPhone').value=p.phone;
+  $('#patientStatus').value=p.status;
+  $('#patientNotes').value=p.notes;
+  showModal();
+}
+
+function removePatient(id){
+  if(!confirm('Remove this patient?')) return;
+  const idx = patients.findIndex(p=>p.id===id);
+  if(idx>=0) {
+    patients.splice(idx,1);
+    renderTable(searchInput.value);
+    selectedPanel.innerHTML='<p>Select a patient to view details.</p>';
+    selectedPanel.classList.add('empty');
+  }
+}
+
+function showModal(){ modal.classList.remove('hidden'); }
+function hideModal(){ modal.classList.add('hidden'); editingId=null; form.reset(); modalTitle.textContent='Add Patient'; }
+
+addBtn.addEventListener('click',()=>{editingId=null; showModal(); form.reset();});
+closeModalBtn.addEventListener('click',hideModal);
+cancelBtn.addEventListener('click',hideModal);
+
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const newPatient={
+    id:editingId||('p'+Date.now()),
+    name:$('#patientName').value.trim(),
+    email:$('#patientEmail').value.trim(),
+    phone:$('#patientPhone').value.trim(),
+    status:$('#patientStatus').value,
+    notes:$('#patientNotes').value.trim()
+  };
+  if(editingId){
+    const idx=patients.findIndex(p=>p.id===editingId);
+    if(idx>=0) patients[idx]={...patients[idx], ...newPatient};
+  } else {
+    patients.push(newPatient);
+  }
+  hideModal();
+  renderTable(searchInput.value);
+});
+
+searchInput.addEventListener('input',e=>renderTable(e.target.value));
+
+renderTable();
+</script>
+</body>
+</html>

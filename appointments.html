@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Appointments Management — Sarasavi</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="css/appointments.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Appointment Management</h1>
+    <p class="muted">View, approve, reschedule, or cancel appointments</p>
+  </div>
+  <div class="top-actions">
+    <input id="searchInput" class="search" placeholder="Search by patient, doctor, department...">
+  </div>
+</header>
+
+<main class="container">
+  <section class="left-col">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-title">Total Appointments</div>
+        <div class="stat-value" id="totalAppt">12</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Pending Approvals</div>
+        <div class="stat-value" id="pendingAppt">3</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">Doctors Available</div>
+        <div class="stat-value" id="doctorsAvailable">4</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table id="apptTable">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Department</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <aside class="right-col">
+    <div class="panel">
+      <h3>Selected Appointment</h3>
+      <div id="selectedApptPanel" class="empty">
+        <p>Select an appointment to view details.</p>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- Reschedule Modal -->
+<div id="rescheduleModal" class="modal hidden">
+  <div class="modal-content">
+    <button class="close" id="closeModal"><i class="fa fa-times"></i></button>
+    <h2>Reschedule Appointment</h2>
+    <form id="rescheduleForm">
+      <div class="form-row">
+        <label>New Date</label>
+        <input type="date" id="newDate" required>
+      </div>
+      <div class="form-row">
+        <label>New Time</label>
+        <input type="time" id="newTime" required>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Save</button>
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const appointments = [
+  {id:'a1', patient:'Kasun Perera', doctor:'Dr. Nimal Perera', dept:'Cardiology', date:'2025-11-21', time:'09:30', status:'Pending'},
+  {id:'a2', patient:'Amali Fernando', doctor:'Dr. Samanthi Jayasuriya', dept:'Pediatrics', date:'2025-11-21', time:'10:00', status:'Approved'},
+  {id:'a3', patient:'Hiran Silva', doctor:'Dr. Ruwan Silva', dept:'Dermatology', date:'2025-11-22', time:'11:00', status:'Pending'},
+  {id:'a4', patient:'Nadee Perera', doctor:'Dr. Anushka Fernando', dept:'Orthopedic', date:'2025-11-22', time:'12:30', status:'Approved'}
+];
+
+const $ = s => document.querySelector(s);
+const tableBody = $('#apptTable tbody');
+const selectedPanel = $('#selectedApptPanel');
+const searchInput = $('#searchInput');
+
+const modal = $('#rescheduleModal');
+const closeModalBtn = $('#closeModal');
+const cancelBtn = $('#cancelBtn');
+const rescheduleForm = $('#rescheduleForm');
+
+let editingId = null;
+
+function renderStats(){
+  $('#totalAppt').textContent = appointments.length;
+  $('#pendingAppt').textContent = appointments.filter(a=>a.status==='Pending').length;
+  const docsAvailable = [...new Set(appointments.filter(a=>a.status!=='Cancelled').map(a=>a.doctor))];
+  $('#doctorsAvailable').textContent = docsAvailable.length;
+}
+
+function renderTable(filter=''){
+  tableBody.innerHTML='';
+  const list = appointments.filter(a=>{
+    const term = filter.trim().toLowerCase();
+    if(!term) return true;
+    return (a.patient+a.doctor+a.dept).toLowerCase().includes(term);
+  });
+  list.forEach(a=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${a.patient}</td>
+      <td>${a.doctor}</td>
+      <td>${a.dept}</td>
+      <td>${a.date}</td>
+      <td>${a.time}</td>
+      <td>${a.status}</td>
+      <td>
+        <button class="btn small view">View</button>
+        <button class="btn small outline reschedule">Reschedule</button>
+        <button class="btn small danger cancel">Cancel</button>
+      </td>
+    `;
+    tr.querySelector('.view').addEventListener('click',()=>selectAppointment(a.id));
+    tr.querySelector('.reschedule').addEventListener('click',()=>openReschedule(a.id));
+    tr.querySelector('.cancel').addEventListener('click',()=>cancelAppointment(a.id));
+    tableBody.appendChild(tr);
+  });
+  renderStats();
+}
+
+function selectAppointment(id){
+  const a=appointments.find(x=>x.id===id);
+  if(!a) return;
+  selectedPanel.classList.remove('empty');
+  selectedPanel.innerHTML=`
+    <p><strong>Patient:</strong> ${a.patient}</p>
+    <p><strong>Doctor:</strong> ${a.doctor}</p>
+    <p><strong>Department:</strong> ${a.dept}</p>
+    <p><strong>Date:</strong> ${a.date}</p>
+    <p><strong>Time:</strong> ${a.time}</p>
+    <p><strong>Status:</strong> ${a.status}</p>
+  `;
+}
+
+function openReschedule(id){
+  editingId=id;
+  modal.classList.remove('hidden');
+}
+
+function cancelAppointment(id){
+  if(!confirm('Cancel this appointment?')) return;
+  const a = appointments.find(x=>x.id===id);
+  if(a) a.status='Cancelled';
+  renderTable(searchInput.value);
+  selectedPanel.innerHTML='<p>Select an appointment to view details.</p>';
+  selectedPanel.classList.add('empty');
+}
+
+rescheduleForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  const a = appointments.find(x=>x.id===editingId);
+  if(a){
+    a.date = $('#newDate').value;
+    a.time = $('#newTime').value;
+    a.status = 'Approved';
+  }
+  modal.classList.add('hidden');
+  editingId=null;
+  renderTable(searchInput.value);
+});
+
+closeModalBtn.addEventListener('click',()=>{modal.classList.add('hidden'); editingId=null;});
+cancelBtn.addEventListener('click',()=>{modal.classList.add('hidden'); editingId=null;});
+
+searchInput.addEventListener('input',e=>renderTable(e.target.value));
+
+renderTable();
+</script>
+</body>
+</html>

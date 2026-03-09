@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback & Ratings | MediCare Plus</title>
+  <link rel="stylesheet" href="css/feedback-ratings.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="my-appointments.html">Appointments</a></li>
+        <li><a href="medical-reports.html">Reports</a></li>
+        <li><a href="prescription.html">Prescriptions</a></li>
+        <li><a href="feedback-ratings.html" class="active">Feedback & Ratings</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="logout.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="overlay">
+      <h1>Patient Feedback & Ratings</h1>
+      <p>Share your experience and read what other patients have said 💙</p>
+    </div>
+  </section>
+
+  <!-- Feedback Form Section -->
+  <section class="feedback-form-section">
+    <h2>Submit Your Feedback</h2>
+    <form id="feedbackForm"  action="feedback.php" method="POST">
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Your Email" required>
+      <textarea placeholder="Write your feedback here..." required></textarea>
+      <label>Rating:</label>
+      <select required>
+        <option value="">Select Rating</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="1">⭐</option>
+      </select>
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </section>
+
+  <!-- Previous Feedback Section -->
+  <section class="previous-feedback">
+    <h2>What Our Patients Say</h2>
+    <div class="feedback-grid" id="feedbackGrid">
+      <!-- JS will populate feedback cards here -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+  <script src="js/feedback-ratings.js"></script>
+</body>
+</html>

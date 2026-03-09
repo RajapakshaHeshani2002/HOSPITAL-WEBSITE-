@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Reports | MediCare Plus</title>
+  <link rel="stylesheet" href="css/Reports.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        
+        <li><a href="my-appointments.html">My Appointments</a></li>
+        <li><a href="medical-reports.html" class="active">Medical Reports</a></li>
+        <li><a href="prescriptions.html">Prescriptions</a></li>
+        <li><a href="feedback-ratings.html">Feedback & Ratings</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Medical Reports</h1>
+      <p>Access all your lab results, visit summaries, and prescriptions in one place.</p>
+    </div>
+    <div class="hero-img">
+      <img src="https://thumbs.dreamstime.com/b/medical-team-working-digital-tablet-healthcare-doctor-technology-tablet-using-computer-analyzed-results-medical-reports-278600480.jpg" alt="Medical Reports">
+    </div>
+  </section>
+
+  <!-- Reports Section -->
+  <section class="reports-section">
+    <h2>All Reports</h2>
+    <div class="reports-container">
+
+      <!-- Lab Test Results -->
+      <div class="report-card">
+        <img src="https://medlineplus.gov/images/LaboratoryTests_share.jpg" alt="Lab Test Results">
+        <h3>Lab Test Results</h3>
+        <p>View your blood tests, urine analysis, and other lab results.</p>
+        <button onclick="downloadPDF('lab-test.pdf')">Download PDF</button>
+      </div>
+
+      <!-- Visit Summaries -->
+      <div class="report-card">
+        <img src="https://blog.cosmaneura.com/content/images/2025/04/10-after-visit-summary-examples-to-enhance-patient-communication.webp" alt="Visit Summaries">
+        <h3>Visit Summaries</h3>
+        <p>Review your doctor visits, diagnoses, and treatment plans.</p>
+        <button onclick="downloadPDF('visit-summary.pdf')">Download PDF</button>
+      </div>
+
+      <!-- Prescriptions -->
+      <div class="report-card">
+        <img src="https://www.northwestpharmacy.com/special-features/images/us-prescriptions-01.jpg" alt="Prescriptions">
+        <h3>Prescriptions</h3>
+        <p>Access all your prescriptions from past visits.</p>
+        <button onclick="downloadPDF('prescriptions.pdf')">Download PDF</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+  <script src="js/reports.js"></script>
+</body>
+</html>

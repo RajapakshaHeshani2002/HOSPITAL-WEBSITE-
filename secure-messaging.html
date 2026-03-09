@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Messaging | MediCare Plus</title>
+  <link rel="stylesheet" href="css/secure-messaging.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="logo">MediCare Plus</div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="my-appointments.html">Appointments</a></li>
+        <li><a href="medical-reports.html">Reports</a></li>
+        <li><a href="prescriptions.html">Prescriptions</a></li>
+        <li><a href="feedback-ratings.html">Feedback</a></li>
+        <li><a href="secure-messaging.html" class="active">Secure Messaging</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="logout.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="overlay">
+      <h1>Secure Messaging with Doctors</h1>
+      <p>Send and receive messages from your doctors securely 💙</p>
+    </div>
+  </section>
+
+  <!-- Messaging Section -->
+  <section class="messaging-section">
+    <div class="container">
+
+      <!-- Doctor List -->
+      <div class="doctor-list">
+        <h3>Doctors</h3>
+        <ul>
+          <li class="active" data-doctor="Dr. John Silva"><img src="images/image1.jpg" alt="Dr. John Silva">Dr. John Silva</li>
+          <li data-doctor="Dr. Maya Fernando"><img src="images/image2.jpg" alt="Dr. Maya Fernando">Dr. Maya Fernando</li>
+          <li data-doctor="Dr. Kavindi Perera"><img src="https://static.vecteezy.com/system/resources/previews/018/765/757/original/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg" alt="Dr. Kavindi Perera">Dr. Kavindi Perera</li>
+        </ul>
+      </div>
+
+      <!-- Chat Window -->
+      <div class="chat-window">
+        <div class="chat-header">
+          <h3>Chat with <span id="doctorName">Dr. John Silva</span></h3>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="message received">Hello! How can I help you today?</div>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="messageInput" placeholder="Type your message..." />
+          <button id="sendBtn">Send</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 MediCare Plus | All Rights Reserved</p>
+  </footer>
+
+  <script src="js/secure-messaging.js"></script>
+</body>
+</html>
